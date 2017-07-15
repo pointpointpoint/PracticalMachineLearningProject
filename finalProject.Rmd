@@ -1,0 +1,45 @@
+---
+title: "finalProject"
+output: html_document
+---
+
+#Data Analysis
+
+###We download data to local for analysis
+
+```
+training <- read.csv("C:/Users/User/Desktop/pml-training.csv")
+testing <- read.csv("C:/Users/User/Desktop/pml-testing.csv")
+
+training <- training[, colSums(is.na(training)) == 0]
+testing <- testing[, colSums(is.na(testing)) == 0]
+
+trainData <- training[, -c(1:7)]
+testData <- testing[, -c(1:7)]
+```
+
+###fit model and do corss-validation
+
+```
+library(caret)
+
+fitControl <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 3,
+  classProbs = TRUE
+)
+
+
+set.seed(1)
+nbfit <- train(classe~., data = trainData,
+               method = "nb",   
+               trControl = fitControl,
+               na.action = na.pass
+)
+```
+
+###Prediction 
+```
+pred <- predict(nbfit,testData,type="raw")
+```
